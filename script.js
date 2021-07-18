@@ -118,8 +118,6 @@ function scoresToDOM() {
     //Scroll to Top, go to score page
     itemContainer.scrollTo({ top: 0, behavior: 'instant' });
     showScorePage();
-
-
 }
 
 // Stop Timer, Process Results, go to Score Page
@@ -248,22 +246,27 @@ function populateGamePage() {
 
 // Display 3, 2, 1, Go !
 function countdownStart() {
-    let delay = 0;
-    for (let i = 3; i >= 0; i--) {
-        delay += 1000;
-        setTimeout(() => {
-            countdown.textContent = i > 0 ? `${i}` : 'Go!';
-        }, delay);
-    }
+    let count = 3;
+    countdown.textContent = count;
+    const timeCountDown = setInterval(() => {
+        count--;
+        if (count === 0) {
+            countdown.textContent = 'GO!';
+        } else if (count === -1) {
+            showGamePage();
+            clearInterval(timeCountDown);
+        } else {
+            countdown.textContent = count;
+        }
+    }, 1000);
 }
 
 // Navigate from splash page to coutdown page
 function showCountdown() {
     countdownPage.hidden = false;
     splashPage.hidden = true;
-    countdownStart();
     populateGamePage();
-    setTimeout(showGamePage, 5000);
+    countdownStart();
 }
 
 // Get the value from the selected radio button
