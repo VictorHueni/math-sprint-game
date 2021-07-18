@@ -30,9 +30,50 @@ let equationObject = {};
 const wrongFormat = [];
 
 // Time
+let timer;
+let timePlayed = 0;
+let baseTime = 0;
+let penaltyTime = 0;
+let finalTime = 0;
+let finalTimeDisplay = '0.0s';
 
 // Scroll
 let valueY = 0;
+
+// Stop Timer, Process Results, go to Score Page
+function checkTime() {
+    if (playerGuessArray.length == questionAmount) {
+        clearInterval(timer);
+        // Check for wrong guessses, add penalty time
+        equationsArray.forEach((equation, index) => {
+            if (equation.evaluated === playerGuessArray[index]) {
+                //Correct guess, no penalty
+
+            } else {
+                // Incorrect guess, add penalty
+                penaltyTime += 0.5;
+            }
+        });
+        finalTime = timePlayed + penaltyTime;
+        console.log('time:', timePlayed, 'penalty:', penaltyTime, 'final:', finalTime);
+    }
+}
+
+// Add a tenth of a second to timePLayed
+function addTime() {
+    timePlayed += 0.1;
+    checkTime();
+}
+
+// Start Timer when game page is clicked
+function startTimer() {
+    // Reset times
+    timePlayed = 0;
+    penaltyTime = 0;
+    finalTime = 0;
+    timer = setInterval(addTime, 100);
+    gamePage.removeEventListener('click', startTimer);
+}
 
 //Scrol, store user selection in playerGuessArray
 function select(guessedTrue) {
@@ -123,12 +164,10 @@ function populateGamePage() {
     itemContainer.appendChild(bottomSpacer);
 }
 
-
 // Display 3, 2, 1, Go !
 function countdownStart() {
     let delay = 0;
-    countdown.textContent = '3';
-    for (let i = parseInt(countdown.textContent); i >= 0; i--) {
+    for (let i = 3; i >= 0; i--) {
         delay += 1000;
         setTimeout(() => {
             countdown.textContent = i > 0 ? `${i}` : 'Go!';
@@ -179,3 +218,4 @@ startForm.addEventListener('click', () => {
 
 
 startForm.addEventListener('submit', selectQuestionAmount);
+gamePage.addEventListener('click', startTimer)
